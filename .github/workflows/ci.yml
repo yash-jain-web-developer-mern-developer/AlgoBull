@@ -1,0 +1,39 @@
+name: Django CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+
+      - name: Install Dependencies
+        run: |
+          python -m venv Algobull/venv
+          source Algobull/venv/bin/activate
+          pip install -r Algobull/requirements.txt
+
+      - name: Run Linting
+        run: |
+          source Algobull/venv/bin/activate
+          flake8 Algobull/todolist_project
+          black --check Algobull/todolist_project
+
+      - name: Run Unit Tests
+        run: |
+          source Algobull/venv/bin/activate
+          python Algobull/todolist_project/manage.py test
